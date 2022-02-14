@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.view.ViewGroup;
@@ -270,16 +271,16 @@ public class Home extends AppCompatActivity {
                 holder.txtMenuName.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).fit().into(holder.imageView);
 //                final Category clickItem = model;
-//                holder.setItemClickListener(new ItemClickListener() {
-//                    @Override
-//                    public void onClick(View view, int position, boolean isLongClick) {
+                holder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
 //                        // Get Category ID and send to a new activity
 //                        Intent foodList = new Intent(Home.this, FoodList.class);
 //                        // Because Category ID is key, we just get key of this item
 //                        foodList.putExtra("CategoryID", adapter.getRef(position).getKey());
 //                        startActivity(foodList);
-//                    }
-//                });
+                    }
+                });
             }
         };
         adapter.notifyDataSetChanged(); // Referesh data if have data changed
@@ -292,5 +293,120 @@ public class Home extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
+    // Update / Delete
 
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if (item.getTitle().equals(Common.UPDATE)) {
+            showUpdateDialog(adapter.getRef(item.getOrder()).getKey(), adapter.getItem(item.getOrder()));
+        } else if (item.getTitle().equals(Common.DELETE)) {
+            deleteCategory(adapter.getRef(item.getOrder()).getKey());
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void deleteCategory(String key) {
+        categories.child(key).removeValue();
+        Toast.makeText(this, "Category deleted!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showUpdateDialog(String key, Category item) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("Update Category");
+        alertDialog.setMessage("Please fill in the Category's name");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View add_menu_layout = inflater.inflate(R.layout.add_new_menu_layout, null);
+
+        edtName = add_menu_layout.findViewById(R.id.edtName);
+        btnSelect = add_menu_layout.findViewById(R.id.btnSelect);
+        btnUpload = add_menu_layout.findViewById(R.id.btnUpload);
+
+        // Set default name
+        edtName.setText(item.getName());
+
+        // Event for button
+        btnSelect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                chooseImage(); // let user select image from gallery and save URI of this image
+            }
+
+
+        });
+
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                changeImage(item);
+            }
+        });
+        alertDialog.setView(add_menu_layout);
+        alertDialog.setIcon(R.drawable.ic_baseline_shopping_cart_24);
+
+        // Set Button
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+
+                // Update information
+                item.setName(edtName.getText().toString());
+                categories.child(key).setValue(item);
+            }
+        });
+        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void changeImage(Category item) {
+        if (savedUri != null) {
+            ProgressDialog mDialog = new ProgressDialog(this);
+            mDialog.setMessage("Uploading...");
+            mDialog.show();
+
+            String imageName = UUID.randomUUID().toString();
+            StorageReference imageFolder = storageReference.child("images/"+imageName);
+            imageFolder.putFile(savedUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            mDialog.dismiss();
+                            Toast.makeText(Home.this, "Uploaded!", Toast.LENGTH_SHORT).show();
+                            imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    // set value for new Category if image uploaded and we could get download link
+                                    item.setImage(uri.toString());
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            mDialog.dismiss();
+                            Toast.makeText(Home.this, "" + e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                            mDialog.setMessage("Uploaded " + progress + "%");
+                        }
+                    });
+
+        }
+    }
 }
