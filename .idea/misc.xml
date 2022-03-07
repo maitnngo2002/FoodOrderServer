@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/activity_food_list.xml" value="0.2128623188405797" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/activity_main.xml" value="0.24094202898550723" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/activity_sign_in.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/add_new_food_layout.xml" value="0.23369565217391305" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/add_new_menu_layout.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/app_bar_home.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/content_home.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/food_item.xml" value="0.17074275362318841" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/menu_item.xml" value="0.18885869565217392" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/layout/nav_header_home.xml" value="0.125" />
         <entry key="..\:/AndroidStudioProjects/FoodOrderServer/app/src/main/res/menu/activity_main_drawer.xml" value="0.125" />
