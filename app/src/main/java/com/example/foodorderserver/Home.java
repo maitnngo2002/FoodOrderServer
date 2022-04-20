@@ -33,6 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -56,7 +57,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
 
-public class Home extends AppCompatActivity {
+public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityHomeBinding binding;
@@ -123,8 +124,8 @@ public class Home extends AppCompatActivity {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-//        navigationView.setNavigationItemSelectedListener(this);
-//        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
 
         // Set Name for user
         View headerView = navigationView.getHeaderView(0);
@@ -293,6 +294,27 @@ public class Home extends AppCompatActivity {
         return true;
     }
     // Update / Delete
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        // Handle navigation view item clicks here
+        int id = menuItem.getItemId();
+        if (id == R.id.nav_menu) {
+
+        } else if (id == R.id.nav_orders) {
+            Intent orderIntent = new Intent(Home.this, OrderStatus.class);
+            startActivity(orderIntent);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
